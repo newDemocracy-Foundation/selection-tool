@@ -1,0 +1,28 @@
+category,name,min,max
+gender,Male,10,11
+gender,Female,9,10
+gender,Other,0,1
+age_bucket,18-24,2,2
+age_bucket,25-34,3,4
+age_bucket,35-44,3,4
+age_bucket,45-54,3,4
+age_bucket,55-64,3,4
+age_bucket,65+,4,5
+geo_bucket,Neighborhood Region 1,6,7
+geo_bucket,Neighborhood Region 2,6,7
+geo_bucket,Neighborhood Region 3,6,7
+Party Affiliation,Not Registered,2,3
+Party Affiliation,Democratic Party,6,8
+Party Affiliation,Independent Party,2,3
+Party Affiliation,Republican Party,6,8
+Party Affiliation,Non-Affiliated/Other,2,3
+home_status,Own,11,12
+home_status,Rent,8,9
+edu_bucket,Some schooling; no diploma,2,2
+edu_bucket,High school diploma or equivalent,2,3
+edu_bucket,Some college or Associate’s degree,7,7
+edu_bucket,Bachelors degree or higher,8,9
+ethnicity_bucket,Asian/PI,1,1
+ethnicity_bucket,Black-Af. Amer-Native Amer-AN-Other,1,1
+ethnicity_bucket,Hispanic/Latinx,2,2
+ethnicity_bucket,White,16,16

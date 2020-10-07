@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+
+	<title>Stratified Random Selection Tool</title>
+
+	<!-- CSS -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="css/main.css"/>
+
+	<!-- JavaScript -->
+	<script type="text/javascript" src="js/xlsx.core.min.js"></script>
+	<script type="text/javascript" src="js/math.min.js"></script>
+	<script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
+
+	<!-- Favicon -->
+	<link rel="icon" href="favicon.ico"  type="image/ico">
+
+</head>
+
+<body>
+
+	<header>
+		<div class="title">Stratified Random Selection Tool</div>
+		<div class="logo"><a href="https://www.newdemocracy.com.au/"><img src="img/logo.png" /></a></div>
+	</header>
+
+	<main>
+		
+		<nav class="top">
+			<div class="tab active" data-pane="about">About</div>
+			<div class="tab" data-pane="import">Import data</div>
+			<div class="tab" data-pane="settings">Choose settings</div>
+			<div class="tab" data-pane="run">Run selection</div>
+			<div class="tab" data-pane="export">Export</div>
+		</nav>
+
+		<div class="pane" data-pane="about">
+			
+			<ul>
+				<li>Who is this tool for?</li>
+				<li>What does it do? What is stratification?</li>
+				<li>All code runs locally in your browser. No data leaves your computer.</li>
+				<li>Open source, can inspect code on GitHub.</li>
+				<li>Sometimes may not work, depending on mathematical properties of your problem (eg. if no feasible committees exist).</li>
+			</ul>
+
+			<strong>Reminders for Luke</strong>
+
+			<ul>
+				<li>Cite jsLPsolver, XLSX, mathjs.</li>
+				<li>Cite original stratified selection code.</li>
+			</ul>
+
+			<nav class="bottom">
+				<div class="tab inactive"></div>
+				<div class="tab" data-pane="import"></div>
+			</nav>
+
+		</div>
+
+		<div class="pane hide" data-pane="import">
+
+			<h2><strong>1</strong> - Import data</h2>
+
+			<div class="two-column">
+
+				<div>
+					<h3>Import your <strong>candidate information</strong></h3>
+					<div id="dragdrop-people" class="filedrop">
+						Drag and drop a CSV or Excel file here.
+						<input id="browse-people" type="file" class="filebrowse" />
+					</div>
+				</div>
+
+				<div>
+					<h3>Import your <strong>population profile</strong></h3>
+					<div id="dragdrop-variables" class="filedrop">
+						Drag and drop a CSV or Excel file here.
+						<input id="browse-variables" type="file" class="filebrowse" />
+					</div>
+				</div>
+
+			</div>
+
+			<ul>
+				<li><a href="#" id="loadExampleData">Load example data</a>.</li>
+				<li>Download example candidate information as <a href="data/example-people-simple.csv">CSV</a>, <a href="data/example-people-simple.xlsx">Excel</a>.</li>
+				<li>Download example population profile as <a href="data/example-categories-simple.csv">CSV</a>, <a href="data/example-categories-simple.xlsx">Excel</a>.</li>
+				<li>Need to provide visual indication that files have loaded.</li>
+				<li>Need to provide ability to clear files / start over.</li>
+			</ul>
+
+			<nav class="bottom">
+				<div class="tab" data-pane="about"></div>
+				<div class="tab" data-pane="settings"></div>
+			</nav>
+
+		</div>
+
+		<div class="pane hide" data-pane="settings">
+
+			<h2><strong>2</strong> - Choose settings</h2>
+
+			Selection algorithm: <select name="algorithm" id="algorithm-select">
+			</select>
+
+			<br /><br />
+
+			Check same address? <input type="checkbox" name="check-same-address" id="checkSameAddress" checked />
+
+			<br /><br />
+
+			Fair to households? <input type="checkbox" name="fair-to-housholds" id="fairToHouseholds" />
+
+			<br /><br />
+
+			Number of people to select: <input type="number" name="n-to-select" id="n-to-select" value="11"/>
+
+			<br /><br />
+
+			<ul>
+				<li>Explain different selection algorithms (broadly how they work, strengths / weaknesses, links to literature).</li>
+				<li>Explain other settings do.</li>
+				<li>Add new settings to make more flexible (eg. specify sameAddressCols, etc.)</li>
+			</ul>
+
+			<nav class="bottom">
+				<div class="tab" data-pane="import"></div>
+				<div class="tab" data-pane="run"></div>
+			</nav>
+
+		</div>
+
+		<div class="pane hide" data-pane="run">
+
+			<h2><strong>3</strong> - Run selection</h2>
+			
+			<div id="run" class="button">RUN SELECTION</div>
+
+			<ul>
+				<li>Click button above to run selection algorithm.</li>
+				<li>A log of the algorithm's progress will be generated below.</li>
+				<li>TODO - add progress bar / running animation.</li>
+			</ul>
+
+
+			<div id="log" class="log">
+				
+			</div>
+
+			<nav class="bottom">
+				<div class="tab" data-pane="settings"></div>
+				<div class="tab" data-pane="export"></div>
+			</nav>
+
+		</div>
+
+		<div class="pane hide" data-pane="export">
+
+			<h2><strong>4</strong> - Export</h2>
+
+			<ul>
+				<li>Use the buttons below to export the random selection in your desired format.</li>
+				<li>TODO - show summary statistics for selection.</li>
+				<li>TODO - add functionality to export people who were NOT selected.</li>
+			</ul>
+
+			<div id="export-csv" class="button">EXPORT as .CSV</div> <div id="export-xlsx" class="button">EXPORT as .XLSX</div>
+
+			<nav class="bottom">
+				<div class="tab" data-pane="run"></div>
+				<div class="tab inactive"></div>
+			</nav>
+
+		</div>
+
+	</main>
+
+	<footer>
+		<div>
+			<a href="https://www.newdemocracy.com.au/">newDemocracy Foundation</a>
+			<br />
+			Made available under an MIT License (?).
+		</div>
+		<div class="right">
+			Built and maintained by <a href="https://lukethorburn.com/">Luke Thorburn</a>
+		</div>
+	</footer>
+	
+	<script type="module" src="js/stratification.js"></script>
+
+	<script>
+		function clickTab(event) {
+			changeTab(event.srcElement.getAttribute('data-pane'));
+		}
+
+		function changeTab(id) {
+			
+			// Set all tabs to inactive.
+			let tabs = document.querySelectorAll('nav div.tab');
+			for (let j = 0; j < tabs.length; j++) {
+				tabs[j].classList.remove('active');
+			}
+
+			// Set clicked tab to active.
+			document.querySelector(`.tab[data-pane="${id}"]`)
+					.classList.add('active');
+
+			// Hide all panes.
+			let panes = document.querySelectorAll('div.pane');
+			for (let j = 0; j < panes.length; j++) {
+				panes[j].classList.add('hide');
+			}
+
+			// Show clicked pane.
+			document
+				.querySelector(`.pane[data-pane="${id}"]`)
+				.classList.remove('hide');
+
+		}
+
+		let tabs = document.querySelectorAll('nav div.tab');
+		for (let i = 0; i < tabs.length; i ++) {
+			tabs[i].addEventListener('click', clickTab, false);
+		}	
+	</script>
+
+</body>
+
+</html>

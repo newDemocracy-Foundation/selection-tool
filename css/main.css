@@ -1,0 +1,265 @@
+:root {
+	--muted: #444;
+}
+
+html {
+	box-sizing: border-box;
+	
+	font-family: 'Roboto', sans-serif;
+	font-size: 100%/1.5rem;
+	color: #141414;
+	background-color: #f5f5f5;
+
+	overflow-y: scroll;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+
+::selection {
+	background-color: #3297fd;
+	text-shadow: none;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+ 	min-height: 100vh;
+}
+
+body {
+	box-sizing: border-box;
+	width: 900px;
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+.hide {
+	display: none !important;
+}
+
+main {
+	padding: 0;
+}
+
+nav.top {
+	display: grid;
+	grid-template-columns: repeat(5, 20%);
+	grid-template-rows: auto;
+	border-bottom: 1px solid #000;
+	counter-reset: tab;
+}
+
+nav.top div.tab {
+	padding: 1rem;
+	cursor: pointer;
+}
+
+nav.top div.tab::before {
+	counter-increment: tab;
+	content: counter(tab) '\2002';
+	color: #ed692b;
+	font-weight: 700;
+}
+
+nav.top div.tab.active {
+	background-color: #ffffff;
+	font-weight: 700;
+	cursor: default;
+}
+
+nav.top div.tab:hover {
+	background-color: #ffffffaa;
+	/*font-weight: 700;*/
+}
+
+nav.bottom {
+	display: grid;
+	grid-template-columns: repeat(2, 50%);
+	grid-template-rows: auto;
+	width: calc(100% + 3rem);
+	margin: 1.5rem -1.5rem -1.5rem -1.5rem;
+	background-color: #f6f6f6;
+	border-top: 1px solid #000;
+}
+
+nav.bottom div.tab:nth-child(2) {
+	text-align: right;
+}
+
+
+nav.bottom div.tab:nth-child(1)::before {
+	content: '\1f814\2002Go back';
+}
+nav.bottom div.tab:nth-child(2)::before {
+	content: 'Proceed\2002\1f816';
+}
+nav.bottom div.tab.inactive:nth-child(1)::before {
+	content: '';
+}
+nav.bottom div.tab.inactive:nth-child(2)::before {
+	content: '';
+}
+
+
+nav.bottom div.tab.inactive {
+	cursor: default;
+}
+nav.bottom div.tab.inactive:hover {
+	background-color: #f6f6f6;
+}
+
+nav.bottom div.tab {
+	padding: 1rem;
+	cursor: pointer;
+}
+
+nav.bottom div.tab:hover {
+	background-color: #ffffffaa;
+	/*font-weight: 700;*/
+}
+
+div.pane {
+	padding: 1.5rem;
+	background-color: #fff;
+	/*border-top: 1px solid #000;*/
+}
+
+header, footer {
+	display: flex;
+	justify-content: space-between;
+	padding: 1.5rem 0;
+}
+
+@media (max-width: 1000px) {
+	header, footer {
+		padding: 1.5rem;
+	}
+}
+
+div.title {
+	font-size: 1.5rem;
+	margin: 0;
+	font-weight: 400;
+}
+
+div.logo {
+	width: 200px;
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: center;
+}
+
+div.logo img {
+	max-width: 100%;
+}
+
+footer {
+	font-size: .8rem;
+	color: var(--muted);
+}
+
+footer a, footer a:visited, footer a:hover, footer a:active {
+	color: var(--muted);
+}
+
+.right {
+	text-align: right;
+}
+
+h2 {
+	font-weight: 300;
+	display: none;
+}
+
+h2 strong {
+	color: #ed692b;
+}
+
+.filedrop {
+	box-sizing: border-box;
+	position: relative;
+	width: 100%;
+	border: 3px solid black;
+	padding: 3rem 1.5rem;
+	text-align: center;
+	color: #999;
+	margin-bottom: 1.5rem;
+}
+
+.filedrop.active {
+	border-color: #ed692b;
+}
+
+.filedrop:hover {
+	border-color: #ed692b;
+}
+
+.filebrowse {
+	opacity: 0.0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	width: 100%;
+	height:100%;
+	cursor: pointer;
+}
+
+div.two-column {
+	display: grid;
+	grid-template-columns: repeat(2, calc(50% - .75rem));
+	grid-template-rows: auto;
+	grid-column-gap: 1.5rem;
+}
+
+h3 {
+	margin-top: 0;
+	font-size: 1rem;
+	font-weight: 400;
+}
+
+.button {
+	box-sizing: border-box;
+	position: relative;
+	display: inline-block;
+	width: auto;
+	padding: .7rem;
+	text-align: center;
+	cursor: pointer;
+	font-weight: 700;
+	background-color: #f6f6f6;
+}
+
+.button:hover {
+	color: #ed692b;
+}
+
+div.log {
+	display: block;
+	background: #f6f6f6;
+	border: 1px solid #444;
+	border-radius: .5rem;
+	min-height: 100px;
+	max-height: 300px;
+	overflow-y: scroll;
+	margin-top: 1.5rem;
+	padding: 0 1rem;
+	font-family: monospace;
+}
+
+div.log::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+div.log::-webkit-scrollbar-track {
+	background-color: transparent;
+  	border-radius: 10px;
+  	margin: .5rem 0;
+}
+div.log::-webkit-scrollbar-thumb {
+	background-color: #dfdfdf;
+	border-radius: 10px;
+}

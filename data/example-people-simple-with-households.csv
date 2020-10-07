@@ -1,0 +1,30 @@
+id,first_name,last_name,email,mobile_number,primary_address1,primary_address2,primary_city,primary_zip,Age,gender,age_bucket,geo_bucket,Party Affiliation,home_status,edu_bucket,ethnicity_bucket
+0,Jeremy,Smith,email0,mobile_number0,address1,address2,primary_city0,primary_zip0,28,Male,18-24,Neighborhood Region 1,Independent Party,Own,High school diploma or equivalent,White
+1,John,Thorburn,email1,mobile_number1,address2,address3,primary_city1,primary_zip1,34,Male,18-24,Neighborhood Region 2,Democratic Party,Rent,Bachelors degree or higher,White
+2,Samantha,Roumeliotis,email2,mobile_number2,address3,address4,primary_city2,primary_zip2,27,Male,18-24,Neighborhood Region 3,Republican Party,Own,Bachelors degree or higher,White
+3,Elizabeth,Woods,email3,mobile_number3,address4,address5,primary_city3,primary_zip3,87,Male,25-34,Neighborhood Region 1,Independent Party,Own,Some college or Associate’s degree,White
+4,Liz,Ericson,email4,mobile_number4,address5,address6,primary_city4,primary_zip4,16,Male,25-34,Neighborhood Region 2,Republican Party,Rent,Some college or Associate’s degree,White
+5,Luke,Thomas,email5,mobile_number5,address6,address7,primary_city5,primary_zip5,27,Male,25-34,Neighborhood Region 3,Non-Affiliated/Other,Rent,Bachelors degree or higher,White
+6,Guy,Rabinov,email6,mobile_number6,address7,address8,primary_city6,primary_zip6,25,Male,35-44,Neighborhood Region 1,Democratic Party,Rent,Some schooling; no diploma,White
+7,Margaret,Elliot,email7,mobile_number7,address8,address9,primary_city7,primary_zip7,17,Male,35-44,Neighborhood Region 2,Democratic Party,Rent,Bachelors degree or higher,Hispanic/Latinx
+8,Phoebe,Troupis,email8,mobile_number8,address9,address10,primary_city8,primary_zip8,28,Male,45-54,Neighborhood Region 3,Non-Affiliated/Other,Rent,Some college or Associate’s degree,White
+9,Anna,Carroll,email9,mobile_number9,address10,address11,primary_city9,primary_zip9,74,Male,45-54,Neighborhood Region 1,Independent Party,Own,Some college or Associate’s degree,White
+10,Marc,Smith,email10,mobile_number10,address11,address12,primary_city10,primary_zip10,26,Male,55-64,Neighborhood Region 2,Democratic Party,Rent,Some college or Associate’s degree,White
+11,Emmanuel,Thorburn,email11,mobile_number11,address12,address13,primary_city11,primary_zip11,35,Male,55-64,Neighborhood Region 3,Not Registered,Rent,Some schooling; no diploma,White
+12,Jeremy,Roumeliotis,email12,mobile_number12,address13,address14,primary_city12,primary_zip12,64,Male,65+,Neighborhood Region 1,Republican Party,Rent,Some college or Associate’s degree,White
+13,John,Woods,email13,mobile_number13,address14,address15,primary_city13,primary_zip13,25,Male,65+,Neighborhood Region 2,Democratic Party,Own,Some college or Associate’s degree,White
+14,Samantha,Ericson,email14,mobile_number14,address14,address16,primary_city14,primary_zip13,29,Male,65+,Neighborhood Region 3,Republican Party,Own,Some college or Associate’s degree,White
+15,Elizabeth,Thomas,email15,mobile_number15,address14,address17,primary_city15,primary_zip13,35,Female,18-24,Neighborhood Region 1,Democratic Party,Own,Some college or Associate’s degree,White
+16,Liz,Rabinov,email16,mobile_number16,address17,address18,primary_city16,primary_zip16,28,Female,18-24,Neighborhood Region 2,Republican Party,Own,Some college or Associate’s degree,White
+17,Luke,Elliot,email17,mobile_number17,address18,address19,primary_city17,primary_zip17,88,Female,18-24,Neighborhood Region 3,Independent Party,Own,Bachelors degree or higher,White
+18,Guy,Troupis,email18,mobile_number18,address19,address20,primary_city18,primary_zip18,17,Female,25-34,Neighborhood Region 1,Independent Party,Rent,Some college or Associate’s degree,Black-Af. Amer-Native Amer-AN-Other
+19,Margaret,Carroll,email19,mobile_number19,address20,address21,primary_city19,primary_zip19,28,Female,25-34,Neighborhood Region 2,Not Registered,Own,Some college or Associate’s degree,Asian/PI
+20,Phoebe,Smith,email20,mobile_number20,address21,address22,primary_city20,primary_zip20,26,Female,25-34,Neighborhood Region 3,Democratic Party,Rent,High school diploma or equivalent,Hispanic/Latinx
+21,Anna,Thorburn,email21,mobile_number21,address22,address23,primary_city21,primary_zip21,18,Female,35-44,Neighborhood Region 1,Not Registered,Own,Some college or Associate’s degree,White
+22,Marc,Roumeliotis,email22,mobile_number22,address23,address24,primary_city22,primary_zip22,29,Female,35-44,Neighborhood Region 2,Independent Party,Own,Some college or Associate’s degree,White
+23,Emmanuel,Woods,email23,mobile_number23,address24,address25,primary_city23,primary_zip23,75,Female,45-54,Neighborhood Region 3,Independent Party,Own,Some college or Associate’s degree,White
+24,Jeremy,Ericson,email24,mobile_number24,address25,address26,primary_city24,primary_zip24,27,Female,45-54,Neighborhood Region 1,Republican Party,Own,High school diploma or equivalent,White
+25,John,Thomas,email25,mobile_number25,address26,address27,primary_city25,primary_zip25,36,Female,55-64,Neighborhood Region 2,Not Registered,Own,Bachelors degree or higher,White
+26,Samantha,Rabinov,email26,mobile_number26,address27,address28,primary_city26,primary_zip26,65,Female,55-64,Neighborhood Region 3,Republican Party,Own,Some college or Associate’s degree,White
+27,Elizabeth,Elliot,email27,mobile_number27,address28,address29,primary_city27,primary_zip27,26,Female,65+,Neighborhood Region 1,Republican Party,Rent,Bachelors degree or higher,White
+28,Liz,Troupis,email28,mobile_number28,address29,address30,primary_city28,primary_zip28,30,Female,65+,Neighborhood Region 2,Independent Party,Rent,High school diploma or equivalent,Asian/PI
