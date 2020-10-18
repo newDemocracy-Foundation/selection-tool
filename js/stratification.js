@@ -169,6 +169,11 @@ function dropHandler(ev, idSuffix) {
 
 					var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 					input[idSuffix] = XLSX.utils.sheet_to_json(firstSheet);
+
+					// Update styling.
+					var id = 'dragdrop-' + idSuffix;
+					document.getElementById(id).classList.add('selected');
+					document.getElementById('filename-' + idSuffix).innerHTML = file.name;
 				}
 
 				reader.readAsArrayBuffer(file)
@@ -207,23 +212,36 @@ function dragLeaveHandler(ev, idSuffix) {
 }
 
 function handleFileSelect(ev) {
-		var file = ev.target.files[0]; // FileList object
+	var file = ev.target.files[0]; // FileList object
 
-		var reader = new FileReader();
+	var reader = new FileReader();
 
-		// Fetch file ID.
-		var idSuffix = this.id.split('-')[1];
+	// Fetch file ID.
+	var idSuffix = this.id.split('-')[1];
 
-		// Closure to capture the file information.
-		reader.onload = function(e) {
-			var data = new Uint8Array(e.target.result);
-			var workbook = XLSX.read(data, {type: 'array'});
+	// Closure to capture the file information.
+	reader.onload = function(e) {
+		var data = new Uint8Array(e.target.result);
+		var workbook = XLSX.read(data, {type: 'array'});
 
-			var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-			input[idSuffix] = XLSX.utils.sheet_to_json(firstSheet);
-		}
+		var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+		input[idSuffix] = XLSX.utils.sheet_to_json(firstSheet);
 
-		reader.readAsArrayBuffer(file)
+		console.log(e.target)
+
+		// Update styling.
+		var id = 'dragdrop-' + idSuffix;
+		document.getElementById(id).classList.add('selected');
+		document.getElementById('filename-' + idSuffix).innerHTML = file.name;
+	}
+
+	// reader.onloadend = (function(file) {
+ //      return function(evt) {
+ //        createListItem(evt, file)
+ //      };
+ //    })(entries[i]);
+
+	reader.readAsArrayBuffer(file)
 }
 
 function dragOverHandlerVariables(event) {
@@ -263,12 +281,31 @@ document.getElementById('browse-variables').addEventListener('change', handleFil
 document.getElementById('browse-people').addEventListener('change', handleFileSelect, false);
 
 function loadExampleData() {
-	input = exampleInput;
+	input.people = deepCopy(exampleInput.people);
+	input.variables = deepCopy(exampleInput.variables);
+	document.getElementById('dragdrop-people').classList.add('selected');
+	document.getElementById('dragdrop-variables').classList.add('selected');
+	document.getElementById('filename-people').innerHTML = 'example-people.csv';
+	document.getElementById('filename-variables').innerHTML = 'example-profile.csv';
 	console.log(input);
 }
 
 document.getElementById('loadExampleData')
 	.addEventListener('click', loadExampleData, false);
+
+function removeFile(filename) {
+	delete input[filename];
+	var id = 'dragdrop-' + filename;
+	document.getElementById(id).classList.remove('selected');
+}
+function removeFilePeople()    { removeFile('people'   ) }
+function removeFileVariables() { removeFile('variables') }
+
+document.getElementById('remove-people')
+	.addEventListener('click', removeFilePeople, false);
+document.getElementById('remove-variables')
+	.addEventListener('click', removeFileVariables, false);
+
 
 // ------------------------------------------------------------------------------- //
 // RUN
@@ -296,10 +333,15 @@ algorithms.forEach(function(d) {
 
 // Display error messages.
 
-function log(message) {
+function log(message, classes = []) {
 	console.log(message);
 	let logArea = document.getElementById('log');
 	const p = document.createElement('p');
+	if (classes.length > 0) {
+		for (let c of classes) {
+			p.classList.add(c);
+		}
+	}
 	p.innerHTML = message;
 	logArea.append(p);
 	logArea.scrollTop = logArea.scrollHeight;
@@ -458,9 +500,11 @@ function _setupCommitteeGeneration(
 		})
 	}
 
-	// Optimise once without any constraints to check if no feasible committees
+	// Optimise once without any constraints to check if any feasible committees
 	// exist at all.
 	let results = solver.Solve(model);
+	console.log(model);
+	console.log(results);
 	if (!results.feasible) {
 		error('No feasible committees found. Excluding a solver failure, the quotas are unsatisfiable.');
 	}
@@ -766,7 +810,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 		  							       coveredAgents,
 		  							       households
 		  							   );
-	
+
 	// The incremental model is an LP with a variable y_e for each entitlement e
 	// and one more variable z. For an agent i, let e(i) denote her entitlement.
 	// Then, the LP is:
@@ -787,8 +831,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 		optimize: 'target',
 		opType: 'min',
 		constraints: {},
-		variables: {},
-		ints: {}
+		variables: {}
 	};
 
 	// Variable z
@@ -796,9 +839,11 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 	// Variables y_e (incr_entitlement_vars)
 	entitlements.forEach(e => {
 		model.variables[`entitlement_${e}`] = {};
-		model.variables[`entitlement_${e}`][`selected_entitlement_${e}`] = 1;
-		model.constraints[`selected_entitlement_${e}`] = { max: 1 };
 		model.variables[`entitlement_${e}`][`sumToOne`] = 1;
+		model.variables[`entitlement_${e}`][`max_entitlement_${e}`] = 1;
+		model.constraints[`max_entitlement_${e}`] = { max: 1 };
+		model.variables[`entitlement_${e}`][`min_entitlement_${e}`] = 1;
+		model.constraints[`min_entitlement_${e}`] = { min: 0 };
 	}) 
 	// Shortcuts for y_{e(i)} (incr_agent_vars)
 	let incrAgentVars = {};
@@ -817,6 +862,13 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 		})
 		// TODO - check this.
 	})
+
+	console.log('ENTERING WHILE LOOP');
+	// model.options = {
+	// 	timeout: 10000
+	// }
+	console.log(model);
+	// return;
 	
 	let n = 0,
 		newCommitteeResult,
@@ -825,11 +877,19 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 		committeeList,
 		probabilities;
 	while (true) {
+		console.log(n);
+
+		console.log('Yes, I\'m here!');
+		console.log('#0');
+
 		let result = solver.Solve(model);
 		if (!result.feasible) {
 			error('No maximin distribution found.')
 		}
 		
+		console.log('#1');
+		console.log(result);
+
 		// Currently optimal values for the y_e.
 		let entitlementWeights = {};
 		Object.values(incrAgentVars)
@@ -843,6 +903,8 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 			})
 		// Currently optimal value for z.
 		let upper = result.result;
+
+		console.log('#2')
 
 		// For these fixed y_e, find the feasible committee B with
 		// maximal Σ_{i ∈ B} y_{e(i)}.
@@ -859,13 +921,15 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 			}
 		})
 
+		console.log('#3')
+
 		newCommitteeResult = solver.Solve(newCommitteeModel);
 		newSet = _ilpResultsToCommittee(newCommitteeResult, agentVars);
 		value = newSet.map(v => {
 				return entitlementWeights[`entitlement_${contributesToEntitlement[v]}`];
 			}).reduce((a, b) => a + b, 0);
 
-		// console.log(value)
+		console.log('#4')
 
 		if (value <= upper + EPS) { // TODO - define EPS
 
@@ -909,6 +973,8 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 
 			let counter = 0;
 			for (let _ = 0; _ < 10; _++) {
+
+				console.log(`Counter = ${counter}`)
 
 				// Scale down the y_{e(i)} for i i ∈ `newSet` to make
 				// Σ_{i ∈ `newSet`} y_{e(i)} ≤ z true.
@@ -1089,7 +1155,7 @@ function runStratification() {
 		}
 
 		if (categoryMinimumsReached(tempCategories)) {
-			log('SUCCESS!')
+			log('SUCCESS!', ['good'])
 			sampleCreated = true;
 		}
 

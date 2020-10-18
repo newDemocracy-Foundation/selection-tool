@@ -34,8 +34,10 @@
 			<div class="tab" data-pane="import">Import data</div>
 			<div class="tab" data-pane="settings">Choose settings</div>
 			<div class="tab" data-pane="run">Run selection</div>
-			<div class="tab" data-pane="export">Export</div>
+			<div class="tab" data-pane="export">Export selection</div>
 		</nav>
+
+		<div id="progress" class="progress" style="width: 20%;"></div>
 
 		<div class="pane" data-pane="about">
 			
@@ -43,6 +45,7 @@
 				<li>Who is this tool for?</li>
 				<li>What does it do? What is stratification?</li>
 				<li>All code runs locally in your browser. No data leaves your computer.</li>
+				<li>But if you have given browser extensions permission to read the contents of the pages you visit, they may be able to access your data. To avoid this, deactivate the extensions before using the tool.</li>
 				<li>Open source, can inspect code on GitHub.</li>
 				<li>Sometimes may not work, depending on mathematical properties of your problem (eg. if no feasible committees exist).</li>
 			</ul>
@@ -70,7 +73,8 @@
 				<div>
 					<h3>Import your <strong>candidate information</strong></h3>
 					<div id="dragdrop-people" class="filedrop">
-						Drag and drop a CSV or Excel file here.
+						<span class="msg-nofile">Drag and drop a CSV or Excel file here.</span>
+						<span class="msg-file"><span id="filename-people" class="filename"></span><button id="remove-people" class="remove-button">Click to remove &#215;</button></span>
 						<input id="browse-people" type="file" class="filebrowse" />
 					</div>
 				</div>
@@ -78,7 +82,8 @@
 				<div>
 					<h3>Import your <strong>population profile</strong></h3>
 					<div id="dragdrop-variables" class="filedrop">
-						Drag and drop a CSV or Excel file here.
+						<span class="msg-nofile">Drag and drop a CSV or Excel file here.</span>
+						<span class="msg-file"><span id="filename-variables" class="filename"></span><button id="remove-variables" class="remove-button">Click to remove &#215;</button></span>
 						<input id="browse-variables" type="file" class="filebrowse" />
 					</div>
 				</div>
@@ -89,8 +94,7 @@
 				<li><a href="#" id="loadExampleData">Load example data</a>.</li>
 				<li>Download example candidate information as <a href="data/example-people-simple.csv">CSV</a>, <a href="data/example-people-simple.xlsx">Excel</a>.</li>
 				<li>Download example population profile as <a href="data/example-categories-simple.csv">CSV</a>, <a href="data/example-categories-simple.xlsx">Excel</a>.</li>
-				<li>Need to provide visual indication that files have loaded.</li>
-				<li>Need to provide ability to clear files / start over.</li>
+				<li>TODO - provide structured help to create the population profile file.</li>
 			</ul>
 
 			<nav class="bottom">
@@ -219,6 +223,28 @@
 			document
 				.querySelector(`.pane[data-pane="${id}"]`)
 				.classList.remove('hide');
+
+			// Update progress bar.
+			let progress = document.getElementById('progress'),
+				width;
+			switch(id) {
+				case 'about':
+					width = 20;
+					break;
+				case 'import':
+					width = 40;
+					break;
+				case 'settings':
+					width = 60;
+					break;
+				case 'run':
+					width = 80;
+					break;
+				case 'export':
+					width = 100;
+					break;
+			}
+			progress.setAttribute('style', `width: ${width}%;`);
 
 		}
 
