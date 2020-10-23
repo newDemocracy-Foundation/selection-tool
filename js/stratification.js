@@ -1110,71 +1110,84 @@ function findRandomSample(people, categories, nPeopleWanted) {
 
 function runStratification() {
 
-	console.log(input);
+	// Add 'in-progress' class to run button.
+	document.getElementById('run').classList.add('in-progress');
+	document.getElementById('run').innerHTML = 'Selection in progress...';
 
-	// Refactor inputted data.
-	processCategories();
-	let nPeopleWanted = document.getElementById('n-to-select').value;
+	// Put the rest in a time-out so the page can render.
+	setTimeout(function(){
 
-	// First check if numbers specified in the population variables file
-	// make sense with the specified number to select.
-	for (const c of categories) {
-		if (nPeopleWanted < c.min || nPeopleWanted > c.max) {
-			error(`The number of people to select (${nPeopleWanted}) is out of the range of the numbers of people in one of the categories (${c.name}). It should be within [${c.min}, ${c.max}].`);
+		console.log(input);
+
+		// Refactor inputted data.
+		processCategories();
+		let nPeopleWanted = document.getElementById('n-to-select').value;
+
+		// First check if numbers specified in the population variables file
+		// make sense with the specified number to select.
+		for (const c of categories) {
+			if (nPeopleWanted < c.min || nPeopleWanted > c.max) {
+				error(`The number of people to select (${nPeopleWanted}) is out of the range of the numbers of people in one of the categories (${c.name}). It should be within [${c.min}, ${c.max}].`);
+			}
 		}
-	}
 
-	// Perform sampling.
+		// Perform sampling.
 
-	let sampleCreated = false,
-		nIters = 0,
-		maxIters = 10;
+		let sampleCreated = false,
+			nIters = 0,
+			maxIters = 10;
 
-	log(`Initial: (selected = 0, remaining = ${input.people.length})`);
+		log(`Initial: (selected = 0, remaining = ${input.people.length})`);
 
-	let peopleSelected = [];
+		let peopleSelected = [];
 
-	while (!sampleCreated && nIters < maxIters) {
+		while (!sampleCreated && nIters < maxIters) {
 
-		let tempPeople = deepCopy(input.people),
-			tempCategories = deepCopy(input.variables);
+			let tempPeople = deepCopy(input.people),
+				tempCategories = deepCopy(input.variables);
 
-		log(`Iteration: ${nIters}`);
+			log(`Iteration: ${nIters}`);
 
-		let result = findRandomSample(
-			tempPeople,
-			tempCategories,
-			nPeopleWanted
-		)
+			let result = findRandomSample(
+				tempPeople,
+				tempCategories,
+				nPeopleWanted
+			)
 
-		if ( result.haltEarly ) {
-			log('Encountered error, halting early.')
-			break;
+			if ( result.haltEarly ) {
+				log('Encountered error, halting early.')
+				break;
+			} else {
+				peopleSelected = result.peopleSelected;
+			}
+
+			if (categoryMinimumsReached(tempCategories)) {
+				log('SUCCESS!', ['good'])
+				sampleCreated = true;
+			}
+
+			nIters++;
+		}
+
+
+		if (sampleCreated) {
+			log(`We tried ${nIters} time(s).`);
+			log(`Selected ${peopleSelected.length} people.`);
 		} else {
-			peopleSelected = result.peopleSelected;
+			log(`Failed after ${nIters} iterations. Gave up.`);
 		}
 
-		if (categoryMinimumsReached(tempCategories)) {
-			log('SUCCESS!', ['good'])
-			sampleCreated = true;
-		}
 
-		nIters++;
-	}
+		peopleSelected = peopleSelected.map(d => d.slice(6));
+		console.log(peopleSelected);
+		console.log(input.people);
+		output = deepCopy(input.people).filter(p => peopleSelected.includes(String(p.id)));
 
+		// Remove 'in-progress' class from run button.
+		document.getElementById('run').classList.remove('in-progress');
+		document.getElementById('run').innerHTML = 'Run selection';
 
-	if (sampleCreated) {
-		log(`We tried ${nIters} time(s).`);
-		log(`Selected ${peopleSelected.length} people.`);
-	} else {
-		log(`Failed after ${nIters} iterations. Gave up.`);
-	}
-
-
-	peopleSelected = peopleSelected.map(d => d.slice(6));
-	console.log(peopleSelected);
-	console.log(input.people);
-	output = deepCopy(input.people).filter(p => peopleSelected.includes(String(p.id)));
+	},10);
 
 }
 

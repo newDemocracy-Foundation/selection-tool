@@ -1,5 +1,7 @@
 :root {
 	--muted: #444;
+	--colour-b1: #557b83;
+	--colour-b2: #779095;
 }
 
 html {
@@ -189,7 +191,7 @@ h2 strong {
 	box-sizing: border-box;
 	position: relative;
 	width: 100%;
-	border: 3px solid black;
+	border: 1px solid black;
 	padding: 3rem 1.5rem;
 	text-align: center;
 	color: #999;
@@ -205,9 +207,13 @@ h2 strong {
 }
 
 .filedrop.selected {
-	background-color: #ed692b;
-	border-color: #ed692b;
-	color: #ffffff;
+	color: #000;
+	border-color: #000;
+	background: rgb(240,245,246);
+	background: -moz-linear-gradient(152deg, rgba(240,245,246,1) 0%, rgba(212,222,223,1) 79%, rgba(204,220,222,1) 95%, rgba(204,220,222,1) 95%, rgba(185,215,221,1) 100%);
+	background: -webkit-linear-gradient(152deg, rgba(240,245,246,1) 0%, rgba(212,222,223,1) 79%, rgba(204,220,222,1) 95%, rgba(204,220,222,1) 95%, rgba(185,215,221,1) 100%);
+	background: linear-gradient(152deg, rgba(240,245,246,1) 0%, rgba(212,222,223,1) 79%, rgba(204,220,222,1) 95%, rgba(204,220,222,1) 95%, rgba(185,215,221,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f0f5f6",endColorstr="#b9d7dd",GradientType=1);
 }
 
 .msg-file {
@@ -267,27 +273,73 @@ h3 {
 }
 
 .button {
-	box-sizing: border-box;
-	position: relative;
-	display: inline-block;
+	-webkit-transition: all 0s ease-out;
+	-moz-transition: all 0s ease-out;
+	-o-transition: all 0s ease-out;
+	-ms-transition: all 0s ease-out;
+	transition: all 0s ease-out;
+
+	height: auto;
 	width: auto;
-	padding: .7rem;
+	
+	display: inline-block;
+	box-sizing: border-box;
+	margin-bottom: calc(5px);
+	
+	color: #fff;
+
+	text-decoration: none;
 	text-align: center;
+	
+	text-shadow: -1px -1px 0px rgba(0,0,0,0.4);
+	
+	padding: .7rem 1.5rem;
+	position: relative;
 	cursor: pointer;
-	font-weight: 700;
-	background-color: #f6f6f6;
+	border: none;
+	border-radius: 5px;
+
+	background-color: #557b83;
+	-webkit-box-shadow: 0px 5px 0px 0px #004553;
+	box-shadow: 0px 5px 0px 0px #004553;
 }
 
-.button:hover {
-	color: #ed692b;
+
+.button:active {
+	top: 3px;
+	-webkit-box-shadow: 0px 2px 0px 0px #004553;
+	box-shadow: 0px 2px 0px 0px #004553;
+}
+
+.run-button {
+	display: block;
+}
+
+@keyframes barberpole {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 60px 30px;
+  }
+}
+
+.run-button.in-progress {
+	background-size: 30px 30px;
+    background-image: linear-gradient(45deg, var(--colour-b1) 25%, var(--colour-b2) 25%, var(--colour-b2) 50%, var(--colour-b1) 50%, var(--colour-b1) 75%, var(--colour-b2) 75%, var(--colour-b2));
+    animation: barberpole 2s linear infinite;
+    cursor: default;
+    top: 3px;
+	-webkit-box-shadow: 0px 2px 0px 0px #004553;
+	box-shadow: 0px 2px 0px 0px #004553;
 }
 
 div.log {
 	display: block;
 	background: #f6f6f6;
-	border: 1px solid #444;
-	border-radius: .5rem;
-	min-height: 100px;
+	/*border: 1px solid #444;*/
+	/*border-radius: .5rem;*/
+	min-height: 300px;
 	max-height: 300px;
 	overflow-y: scroll;
 	margin-top: 1.5rem;
@@ -296,17 +348,17 @@ div.log {
 }
 
 div.log::-webkit-scrollbar {
-	width: 8px;
-	height: 8px;
+	width: 6px;
+	height: 6px;
 }
 div.log::-webkit-scrollbar-track {
 	background-color: transparent;
   	border-radius: 10px;
-  	margin: .5rem 0;
+  	margin: 0rem 0;
 }
 div.log::-webkit-scrollbar-thumb {
 	background-color: #dfdfdf;
-	border-radius: 10px;
+	/*border-radius: 10px;*/
 }
 
 div.log p.good {

@@ -142,18 +142,15 @@
 
 			<h2><strong>3</strong> - Run selection</h2>
 			
-			<div id="run" class="button">RUN SELECTION</div>
-
-			<ul>
-				<li>Click button above to run selection algorithm.</li>
-				<li>A log of the algorithm's progress will be generated below.</li>
-				<li>TODO - add progress bar / running animation.</li>
-			</ul>
-
+			<div id="run" class="button run-button">Run Selection</div>
 
 			<div id="log" class="log">
-				
+
 			</div>
+
+			<ul>
+				<li>Log messages while in progress, rather than all at the end (https://stackoverflow.com/questions/13537096/can-i-force-the-browser-to-render-out-the-dom-changes-before-continuing-javascri)</li>
+			</ul>
 
 			<nav class="bottom">
 				<div class="tab" data-pane="settings"></div>
@@ -172,7 +169,7 @@
 				<li>TODO - add functionality to export people who were NOT selected.</li>
 			</ul>
 
-			<div id="export-csv" class="button">EXPORT as .CSV</div> <div id="export-xlsx" class="button">EXPORT as .XLSX</div>
+			<div id="export-csv" class="button">Export as .CSV</div> <div id="export-xlsx" class="button">Export as .XLSX</div>
 
 			<nav class="bottom">
 				<div class="tab" data-pane="run"></div>
