@@ -112,6 +112,44 @@ nav.bottom div.tab.inactive:nth-child(2)::before {
 	content: '';
 }
 
+a.intext {
+	/*text-decoration: none;*/
+	color: #000;
+	/*background-color: #ed692b11;*/
+	text-decoration: underline;
+	text-decoration-color: #ed692b;
+}
+
+a.intext:hover {
+	background-color: #ed692b22;
+	/*color: #fff;*/
+}
+
+dt {
+	margin-left: 1rem;
+	color: #004553;
+	background-color: #557b8322;
+	/*color: #fff;*/
+	font-weight: 600;
+	margin-bottom: .5rem;
+}
+
+dd {
+	margin-bottom: 1rem;
+}
+
+pre {
+	font-size: 16px;
+	/*text-align: center;*/
+}
+
+div.acknowledgements {
+	background-color: #557b8322;
+	color: #004553;
+	font-size: .9rem;
+	padding: .001rem .6rem;
+	border-radius: .5rem;
+}
 
 nav.bottom div.tab.inactive {
 	cursor: default;
@@ -178,13 +216,20 @@ footer a, footer a:visited, footer a:hover, footer a:active {
 	text-align: right;
 }
 
-h2 {
-	font-weight: 300;
-	display: none;
+.text-wrap {
+	display: block;
+	width: 600px;
+	max-width: 100%;
+	margin: 0 auto;
 }
 
-h2 strong {
-	color: #ed692b;
+h2 {
+	font-weight: 800;
+	font-size: 1.2rem;
+	/*color: #557b83;*/
+	color: #004553;
+	/*text-shadow: 1px 1px 0px #557b83;*/
+	
 }
 
 .filedrop {

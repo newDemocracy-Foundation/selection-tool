@@ -7,7 +7,7 @@
 	<title>Stratified Random Selection Tool</title>
 
 	<!-- CSS -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="css/main.css"/>
 
 	<!-- JavaScript -->
@@ -41,21 +41,72 @@
 
 		<div class="pane" data-pane="about">
 			
-			<ul>
-				<li>Who is this tool for?</li>
-				<li>What does it do? What is stratification?</li>
-				<li>All code runs locally in your browser. No data leaves your computer.</li>
-				<li>But if you have given browser extensions permission to read the contents of the pages you visit, they may be able to access your data. To avoid this, deactivate the extensions before using the tool.</li>
-				<li>Open source, can inspect code on GitHub.</li>
-				<li>Sometimes may not work, depending on mathematical properties of your problem (eg. if no feasible committees exist).</li>
-			</ul>
+			<div class="text-wrap">
 
-			<strong>Reminders for Luke</strong>
+				<p>Emerging models of public deliberation&mdash;such as <a class="intext" target="_blank" rel="noopener noreferrer" href="https://newdemocracy.com.au/wp-content/uploads/2017/05/docs_researchnotes_2017_May_nDF_RN_20170508_FormsOfMiniPublics.pdf">citizens' juries, citizens' assemblies or deliberative polls</a>&mdash;require that the participants be randomly selected. Usually it is desirable for the random selection to be <em>stratified</em>: that is, to be representative of the general population along dimensions such as age, gender, nationality or socio-economic status.</p>
 
-			<ul>
-				<li>Cite jsLPsolver, XLSX, mathjs.</li>
-				<li>Cite original stratified selection code.</li>
-			</ul>
+				<p>This tool makes it easier to perform such stratified random selection.</p>
+
+				<h2>Who is providing this tool?</h2>
+
+				<p>This tool is made available by the <a class="intext" target="_blank" rel="noopener noreferrer" href="https://www.newdemocracy.com.au/">newDemocracy Foundation</a>, an independent, non-partisan research and development organisation. We aim to discover, develop, demonstrate, and promote complementary alternatives which will restore trust in public decision making.</p>
+
+				<h2>Why should I trust it?</h2>
+
+				<p>To maintain the integrity of a mini-public, it is important when selecting participants</p>
+
+				<ol style="list-style-type: lower-alpha;">
+					<li>that the selection is genuinely random, and</li>
+					<li>that personal information about the candidates is kept private.</li>
+				</ol>
+
+				<p>To this end, this selection tool has the following features.</p>
+
+				<dl>
+					<dt>Open source</dt>
+					<dd>
+						<p>The source code for this tool is publicly available and can be found in <a href="https://github.com/newDemocracy-Foundation/selection-tool" target="_blank" rel="noopener noreferrer" class="intext">this GitHub repository</a>.</p>
+						<p>To ensure you are using the code that is in the GitHub repository, you can access this page via the following direct link on the GitHub Pages domain.</p>
+						<pre>https://newDemocracy-Foundation.github.io/selection-tool/</pre>
+					</dd>
+
+					<dt>Runs locally</dt>
+					<dd>
+						<p>The selection algorithm will run locally in your browser. The tool will work even if you disconnect from the internet (after initially loading the tool).</p>
+						<p>The tool does not upload any data (including data that you input, such as candidate information) to the internet.</p>
+						<p>If you are using any browser extensions, it is possible that you have previously granted them permission to access the data on pages that you visit, including this tool. If privacy is a concern, we suggest you temporarily disable your browser extensions whilst performing the selection to ensure they do not have access to candidate information.</p>
+					</dd>
+					
+				</dl>
+
+				<h2>What do I need?</h2>
+
+				To use the tool, you need two sets of information.
+
+				<ul>
+					<li>A spreadsheet containing demographic information for each of the eligible candidates. To understand the required formatting, please refer to this example <a class="intext" href="data/example-people-simple.xlsx">Excel spreadsheet</a>, or this <a class="intext" href="/data/example-people-simple.csv">CSV file</a>.<br /><br /></li>
+					<li>A spreadsheet containing information about the distribution of demographic factors in the population for which you want your random sample to be representative. To understand the required formatting, please refer to this example <a class="intext" href="data/example-categories-simple.xlsx">Excel spreadsheet</a>, or this <a class="intext" href="/data/example-categories-simple.csv">CSV file</a>.</li>
+				</ul>
+
+				<h2>Getting Help</h2>
+
+				<p>If you need help using the tool or understanding if it is right for your situation, please contact Kyle Redman at <a class="intext" href="mailto:kyle.redman@newdemocracy.com.au ">kyle.redman@newdemocracy.com.au</a>.</p>
+
+				<p>If you have any technical questions, bug reports, or suggested improvements, please <a href="https://github.com/newDemocracy-Foundation/selection-tool/issues" target="_blank" rel="noopener noreferrer" class="intext">open an issue</a> in the <a href="https://github.com/newDemocracy-Foundation/selection-tool" target="_blank" rel="noopener noreferrer" class="intext">GitHub repository</a>.</p>
+
+				<h2>One final note</h2>
+
+				<p>Be aware that depending on the particular makeup of your pool of candidates, and the specifications of the stratified sample you are trying to obtain, it is possible that the tool may not be able to find a valid sample. If this occurs, the tool will inform you.</p>
+
+				<div class="acknowledgements">
+					
+					<p>This tool makes use of the following JavaScript libraries: <a href="https://github.com/JWally/jsLPSolver" target="_blank" rel="noopener noreferrer" class="intext">jsLPsolver</a>, <a href="https://github.com/SheetJS/sheetjs" target="_blank" rel="noopener noreferrer" class="intext">SheetJS</a> and <a href="https://mathjs.org/" target="_blank" rel="noopener noreferrer" class="intext">mathjs</a>. The code is modelled on a similar <a href="https://github.com/sortitionfoundation/stratification-app" target="_blank" rel="noopener noreferrer" class="intext">Python-based selection tool</a> developed by the <a href="https://www.sortitionfoundation.org/" target="_blank" rel="noopener noreferrer" class="intext">Sortition Foundation</a>.</p>
+
+				</div>
+
+
+
+			</div>
 
 			<nav class="bottom">
 				<div class="tab inactive"></div>
@@ -65,8 +116,6 @@
 		</div>
 
 		<div class="pane hide" data-pane="import">
-
-			<h2><strong>1</strong> - Import data</h2>
 
 			<div class="two-column">
 
@@ -91,9 +140,9 @@
 			</div>
 
 			<ul>
-				<li><a href="#" id="loadExampleData">Load example data</a>.</li>
-				<li>Download example candidate information as <a href="data/example-people-simple.csv">CSV</a>, <a href="data/example-people-simple.xlsx">Excel</a>.</li>
-				<li>Download example population profile as <a href="data/example-categories-simple.csv">CSV</a>, <a href="data/example-categories-simple.xlsx">Excel</a>.</li>
+				<li><a href="#" id="loadExampleData" class="intext">Load example data</a>.</li>
+				<li>Download example candidate information as <a class="intext" href="data/example-people-simple.csv">CSV</a>, <a class="intext" href="data/example-people-simple.xlsx">Excel</a>.</li>
+				<li>Download example population profile as <a class="intext" href="data/example-categories-simple.csv">CSV</a>, <a class="intext" href="data/example-categories-simple.xlsx">Excel</a>.</li>
 				<li>TODO - provide structured help to create the population profile file.</li>
 			</ul>
 
@@ -105,8 +154,6 @@
 		</div>
 
 		<div class="pane hide" data-pane="settings">
-
-			<h2><strong>2</strong> - Choose settings</h2>
 
 			Selection algorithm: <select name="algorithm" id="algorithm-select">
 			</select>
@@ -140,8 +187,6 @@
 
 		<div class="pane hide" data-pane="run">
 
-			<h2><strong>3</strong> - Run selection</h2>
-			
 			<div id="run" class="button run-button">Run Selection</div>
 
 			<div id="log" class="log">
@@ -160,8 +205,6 @@
 		</div>
 
 		<div class="pane hide" data-pane="export">
-
-			<h2><strong>4</strong> - Export</h2>
 
 			<ul>
 				<li>Use the buttons below to export the random selection in your desired format.</li>
