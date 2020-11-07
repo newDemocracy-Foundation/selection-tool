@@ -206,13 +206,34 @@
 
 		<div class="pane hide" data-pane="export">
 
-			<ul>
-				<li>Use the buttons below to export the random selection in your desired format.</li>
-				<li>TODO - show summary statistics for selection.</li>
-				<li>TODO - add functionality to export people who were NOT selected.</li>
-			</ul>
+			<div class="export-table">
+				
+				<div>
+					<p><strong>Export selected candidates</strong></p>
+					<p>Download the details of the candidates who were selected, in your preferred format.</p>
+				</div>
+				<div id="export-in-csv" class="button">CSV</div>
+				<div id="export-in-xlsx" class="button">Excel</div>
 
-			<div id="export-csv" class="button">Export as .CSV</div> <div id="export-xlsx" class="button">Export as .XLSX</div>
+				<div>
+					<p><strong>Export everyone else</strong></p>
+					<p>Download the candidates who were <strong>not</strong> selected. This can sometimes be helpful if you need to choose participants for a future event, or if you have someone withdraw their participation and need to select a replacement.</p></div>
+				<div id="export-out-csv" class="button">CSV</div>
+				<div id="export-out-xlsx" class="button">Excel</div>
+
+			</div>
+
+			<table id="summary-table" class="summary hide">
+				<thead>
+					<tr>
+						<th class="left">Variable</th>
+						<th class="left">Value</th>
+						<th># Requested</th>
+						<th># Selected</th>
+					</tr>
+				</thead>
+				<tbody id="summary-table-body"></tbody>
+			</table>
 
 			<nav class="bottom">
 				<div class="tab" data-pane="run"></div>
@@ -291,7 +312,9 @@
 		let tabs = document.querySelectorAll('nav div.tab');
 		for (let i = 0; i < tabs.length; i ++) {
 			tabs[i].addEventListener('click', clickTab, false);
-		}	
+		}
+
+		// changeTab('export');
 	</script>
 
 </body>

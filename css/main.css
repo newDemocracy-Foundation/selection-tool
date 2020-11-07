@@ -411,3 +411,55 @@ div.log p.good {
 	font-weight: 700;
 	font-size: 1.2rem;
 }
+
+div.export-table {
+	display: grid;
+	grid-template-columns: 1fr auto auto;
+	grid-template-rows: auto auto;
+	grid-column-gap: 20px;
+	grid-row-gap: 20px;
+	align-items: center;
+	/*padding: 10px;*/
+}
+
+div.export-table p {
+	margin: 0 0 5px 0;
+}
+
+
+
+
+table.summary {
+	width: 100%;
+	/*border: 10px solid #557b8322;*/
+	border-collapse: collapse;
+	padding: 10px;
+	/*background-color: #557b8322;*/
+	text-align: right;
+	margin-top: 20px;
+}
+
+table.summary tr {
+	border-top: 1px solid #557b83;
+}
+
+table.summary tr.new-value {
+	border-top-width: 3px;
+}
+
+table.summary thead tr {
+	border-top: none;
+}
+
+table.summary td {
+	padding: 5px 5px 5px 0;
+}
+
+table.summary th {
+	padding: 5px 5px 5px 0;
+	color: #004553;
+}
+
+table.summary .left {
+	text-align: left;
+}

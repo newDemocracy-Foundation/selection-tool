@@ -12,7 +12,8 @@
 import exampleInput from './example-data-simple.js';
 
 let input = {},
-	output = [],
+	outputSelected = [],
+	outputNotSelected = [],
 	categories = [],
 	checkSameAddressColumns = [
 		'primary_address1',
@@ -1181,7 +1182,47 @@ function runStratification() {
 		peopleSelected = peopleSelected.map(d => d.slice(6));
 		console.log(peopleSelected);
 		console.log(input.people);
-		output = deepCopy(input.people).filter(p => peopleSelected.includes(String(p.id)));
+		outputSelected = deepCopy(input.people).filter(p => peopleSelected.includes(String(p.id)));
+		outputNotSelected = deepCopy(input.people).filter(p => !peopleSelected.includes(String(p.id)));
+
+		// Populate summary table.
+		let html = "",
+			table = document.getElementById('summary-table-body'),
+			vars = input.variables.map(d => d.category).filter(unique);
+
+		for (let v of vars) {
+			let vals = input.variables.filter(d => d.category == v),
+				nVals = vals.length;
+			for (let i = 0; i < nVals; i++) {
+				let requests = "";
+				if (vals[i].min == vals[i].max) {
+					requests = vals[i].min;
+				} else {
+					let { min, max } = vals[i];
+					requests = `${min} &ndash; ${max}`;
+				}
+				let selects = outputSelected.filter(d => d[v] == vals[i].name).length;
+
+				if (i == 0) {
+					html += `<tr class="new-value">
+						<td class="left" rowspan="${nVals}">
+							${v}
+						</td>
+						<td class="left">${vals[i].name}</td>
+						<td>${requests}</td>
+						<td>${selects}</td>
+					</tr>`;
+				} else {
+					html += `<tr>
+						<td class="left">${vals[i].name}</td>
+						<td>${requests}</td>
+						<td>${selects}</td>
+					</tr>`;
+				}
+			}
+		}
+		table.innerHTML = html;
+		document.getElementById('summary-table').classList.remove('hide');
 
 		// Remove 'in-progress' class from run button.
 		document.getElementById('run').classList.remove('in-progress');
@@ -1200,23 +1241,41 @@ document.getElementById("run").addEventListener("click", runStratification, fals
 // ------------------------------------------------------------------------------- //
 // EXPORT
 
-function fileExport(ev) {
+function exportSelected(ev) {
 
-	var fileExtension = this.id.split('-')[1];
+	var fileExtension = this.id.split('-')[2];
 
 	// Construct workbook.
 	var wb = {};
 	wb['SheetNames'] = ['Selection'];
 	wb['Sheets'] = {
-		Selection: XLSX.utils.json_to_sheet(output)
+		Selection: XLSX.utils.json_to_sheet(outputSelected)
 	}
 
 	XLSX.writeFile(wb, 'selection.' + fileExtension)
 
 }
 
-document.getElementById("export-csv").addEventListener("click", fileExport, false);
-document.getElementById("export-xlsx").addEventListener("click", fileExport, false);
+function exportNotSelected(ev) {
+
+	var fileExtension = this.id.split('-')[2];
+
+	// Construct workbook.
+	var wb = {};
+	wb['SheetNames'] = ['Selection'];
+	wb['Sheets'] = {
+		Selection: XLSX.utils.json_to_sheet(outputNotSelected)
+	}
+
+	XLSX.writeFile(wb, 'selection.' + fileExtension)
+
+}
+
+document.getElementById("export-in-csv").addEventListener("click", exportSelected, false);
+document.getElementById("export-in-xlsx").addEventListener("click", exportSelected, false);
+
+document.getElementById("export-out-csv").addEventListener("click", exportNotSelected, false);
+document.getElementById("export-out-xlsx").addEventListener("click", exportNotSelected, false);
 
 
 // ------------------------------------------------------------------------------- //
