@@ -112,12 +112,28 @@ nav.bottom div.tab.inactive:nth-child(2)::before {
 	content: '';
 }
 
+div.notification {
+	background-color: #557b8322;
+	color: #004553;
+	padding: .5rem 1rem;
+	margin-bottom: 1.5rem;
+	border-radius: .5rem;
+}
+
+div.notification i {
+	color: #ed692b;
+}
+
 a.intext {
 	/*text-decoration: none;*/
 	color: #000;
 	/*background-color: #ed692b11;*/
 	text-decoration: underline;
 	text-decoration-color: #ed692b;
+}
+
+div.notification a.intext {
+	color: #004553;
 }
 
 a.intext:hover {
@@ -183,6 +199,10 @@ header, footer {
 @media (max-width: 1000px) {
 	header, footer {
 		padding: 1.5rem;
+	}
+
+	div.notification {
+		margin: 0 1.5rem 1.5rem 1.5rem;
 	}
 }
 

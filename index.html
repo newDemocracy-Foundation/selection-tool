@@ -10,10 +10,13 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="css/main.css"/>
 
+	<script src="https://kit.fontawesome.com/3e29baf0d8.js" crossorigin="anonymous"></script>
+
 	<!-- JavaScript -->
 	<script type="text/javascript" src="js/xlsx.core.min.js"></script>
 	<script type="text/javascript" src="js/math.min.js"></script>
-	<script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
+	<!--<script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>-->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
 
 	<!-- Favicon -->
 	<link rel="icon" href="favicon.ico"  type="image/ico">
@@ -28,6 +31,7 @@
 	</header>
 
 	<main>
+		<div class="notification"><i class="fas fa-megaphone"></i>&ensp;&ensp;This tool is still a work in progress, but should be functional. <a href="mailto:kyle.redman@newdemocracy.com.au" class="intext">Let us know</a> if you get stuck.</div>
 		
 		<nav class="top">
 			<div class="tab active" data-pane="about">About</div>
@@ -40,7 +44,8 @@
 		<div id="progress" class="progress" style="width: 20%;"></div>
 
 		<div class="pane" data-pane="about">
-			
+
+
 			<div class="text-wrap">
 
 				<p>Emerging models of public deliberation&mdash;such as <a class="intext" target="_blank" rel="noopener noreferrer" href="https://newdemocracy.com.au/wp-content/uploads/2017/05/docs_researchnotes_2017_May_nDF_RN_20170508_FormsOfMiniPublics.pdf">citizens' juries, citizens' assemblies or deliberative polls</a>&mdash;require that the participants be randomly selected. Usually it is desirable for the random selection to be <em>stratified</em>: that is, to be representative of the general population along dimensions such as age, gender, nationality or socio-economic status.</p>
@@ -193,10 +198,6 @@
 
 			</div>
 
-			<ul>
-				<li>Log messages while in progress, rather than all at the end (https://stackoverflow.com/questions/13537096/can-i-force-the-browser-to-render-out-the-dom-changes-before-continuing-javascri)</li>
-			</ul>
-
 			<nav class="bottom">
 				<div class="tab" data-pane="settings"></div>
 				<div class="tab" data-pane="export"></div>
@@ -314,7 +315,7 @@
 			tabs[i].addEventListener('click', clickTab, false);
 		}
 
-		// changeTab('export');
+		// changeTab('run');
 	</script>
 
 </body>
