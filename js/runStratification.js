@@ -136,7 +136,45 @@ function log(message, classes = []) {
 }
 
 function error(message) {
-	alert(message);
+	
+	postMessage({
+		type: 'error',
+		message: message,
+		classes: ['error']
+	})
+}
+
+// Solve LP in another Web Worker.
+
+function solveInWebWorker(model, timeout = 5000) {
+
+
+	let p = new Promise(resolve => {
+
+		let worker = new Worker('/js/solveLPinWebWorker.js'),
+			results = {};
+
+		worker.postMessage([
+			model
+		])
+
+		worker.onmessage = function(e) {
+			if (e.data.type == 'output') {
+				results = e.data.output;
+				worker.terminate();
+				resolve(results);
+			}
+		}
+
+		setTimeout(function() {
+			worker.terminate();
+			resolve('TIMED OUT');
+		}, timeout);
+
+	})
+
+	return p;
+
 }
 
 function processCategories() {
@@ -291,15 +329,17 @@ function _setupCommitteeGeneration(
 	// Optimise once without any constraints to check if any feasible committees
 	// exist at all.
 	let results = solver.Solve(model);
-	console.log(model);
-	console.log(results);
+	// console.log(model);
+	// console.log(results);
 	if (!results.feasible) {
-		error('No feasible committees found. Excluding a solver failure, the quotas are unsatisfiable.');
+		error('No committees were found that satisfy the specified quotas.');
+		// But this may also be caused if the solver just fails to find any feasible committees.
 	}
 
 	return {
 		newCommitteeModel: model,
-		agentVars: agentVars
+		agentVars: agentVars,
+		feasible: results.feasible
 	};
 }
 
@@ -318,12 +358,12 @@ function _ilpResultsToCommittee(results, agentVars) {
 	}
 }
 
-function _generateInitialCommittees(
+async function _generateInitialCommittees(
 	model,
 	agentVars,
 	multiplicativeWeightsRounds) {
 
-	// To sepeed up the main iteration of the maximin and Nash algorithms, start from
+	// To speed up the main iteration of the maximin and Nash algorithms, start from
 	// a diverse set of feasible committees. In particular, each agent that can be
 	// included in any committee will be included in at least one of these committees.
 
@@ -345,43 +385,60 @@ function _generateInitialCommittees(
 			model.variables[v].target = weights[v];
 		})
 
-		let results = solver.Solve(model);
-		let newSet = _ilpResultsToCommittee(results, agentVars);
 
-		// We then decrease the weight of each agent in the new committee by a constant
-		// factor. As a result, future rounds will strongly prioritise including agents
-		// that appear in few committees.
+		let results = await solveInWebWorker(model);
+		// let results = solver.Solve(model);
+			// ^ THIS CAN BE QUITE SLOW, NEED TO INVESTIGATE WHY.
 
-		newSet.forEach(v => {
-			weights[v] = weights[v] * 0.8;
-		})
+		if (results !== "TIMED OUT") {
 
-		// We rescale the weights, which does not change the conceptual algorithm but
-		// prevents floating point problems.
+			let newSet = _ilpResultsToCommittee(results, agentVars);
+	
+			// We then decrease the weight of each agent in the new committee by a constant
+			// factor. As a result, future rounds will strongly prioritise including agents
+			// that appear in few committees.
 
-		let sumOfWeights = Object.values(weights).reduce((a, b) => a + b, 0);
-
-		agentVars.forEach(v => {
-			weights[v] = weights[v] * (agentVars.length / sumOfWeights)
-		})
-
-		if (!arrayInArray(newSet, committees)) {
-			
-			committees.push(newSet);
 			newSet.forEach(v => {
-				if (!coveredAgents.includes(v)) {
-					coveredAgents.push(v);
-				}
+				weights[v] = weights[v] * 0.8;
 			})
+
+			// We rescale the weights, which does not change the conceptual algorithm but
+			// prevents floating point problems.
+
+			let sumOfWeights = Object.values(weights).reduce((a, b) => a + b, 0);
+
+			agentVars.forEach(v => {
+				weights[v] = weights[v] * (agentVars.length / sumOfWeights)
+			})
+
+			if (!arrayInArray(newSet, committees)) {
+				
+				committees.push(newSet);
+				newSet.forEach(v => {
+					if (!coveredAgents.includes(v)) {
+						coveredAgents.push(v);
+					}
+				})
+
+			} else {
+
+				// If our committee is already known, make all weights a bit more equal
+				// again to mix things up a little.
+				agentVars.forEach(v => {
+					weights[v] = 0.9 * weights[v] + 0.1;
+				})
+			}
 
 		} else {
 
-			// If our committee is already known, make all weights a bit more equal
-			// again to mix things up a little.
+			// If solver times out, randomise weights a bit to mix things up.
+			console.log('shaking things up...')
 			agentVars.forEach(v => {
-				weights[v] = 0.9 * weights[v] + 0.1;
+				weights[v] = weights[v] + 0.1*Math.random();
 			})
+
 		}
+
 
 		log(`Multiplicative weights phase, round ${i+1}/${multiplicativeWeightsRounds}. Discovered ${committees.length} committees so far.`);
 	}
@@ -519,7 +576,7 @@ function _findCommitteeProbabilities(
 
 	// Optimise model.
 
-	console.log(model);
+	// console.log(model);
 
 	let result = solver.Solve(model);
 	if (!result.feasible) {
@@ -538,12 +595,12 @@ function _findCommitteeProbabilities(
 	let sumOfProbabilities = math.sum(probabilities);
 	probabilities = probabilities.map(p => p / sumOfProbabilities);
 
-	console.log(probabilities);
+	// console.log(probabilities);
 
 	return probabilities;
 }
 
-function findDistributionMaximin(people, categories, nPeopleWanted) {
+async function findDistributionMaximin(people, categories, nPeopleWanted) {
 
 	// Find a distribution over feasible committees that maximises the minimum
 	// probability of an agent being selected (`fairToHouseholds = false`) or
@@ -567,7 +624,8 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 	// Set up an ILP `newCommitteeModel` that can be used for discovering new
 	// feasible committees maximising some sum of weights over the people.
 	let { newCommitteeModel,
-		  agentVars } = _setupCommitteeGeneration(
+		  agentVars,
+		  feasible } = _setupCommitteeGeneration(
 							people,
 							categories,
 							nPeopleWanted,
@@ -575,10 +633,17 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 							households
 						);
 
+	if (!feasible) {
+		return {
+			committees: [],
+			probabilities: []
+		};
+	}
+
 	// Start by finding some initial committees, guaranteed to cover every person
 	// that can be covered by some committee.
 	let { committees,
-		  coveredAgents } = _generateInitialCommittees(
+		  coveredAgents } = await _generateInitialCommittees(
 		  						newCommitteeModel,
 		  						agentVars,
 		  						Math.floor(people.length / 2)
@@ -654,7 +719,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 	// model.options = {
 	// 	timeout: 10000
 	// }
-	console.log(model);
+	// console.log(model);
 	// return;
 	
 	let n = 0,
@@ -666,7 +731,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 	while (true) {
 		console.log(n);
 
-		console.log('Yes, I\'m here!');
+		// console.log('Yes, I\'m here!');
 		console.log('#0');
 
 		let result = solver.Solve(model);
@@ -675,7 +740,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 		}
 		
 		console.log('#1');
-		console.log(result);
+		// console.log(result);
 
 		// Currently optimal values for the y_e.
 		let entitlementWeights = {};
@@ -761,7 +826,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 			let counter = 0;
 			for (let _ = 0; _ < 10; _++) {
 
-				console.log(`Counter = ${counter}`)
+				// console.log(`Counter = ${counter}`)
 
 				// Scale down the y_{e(i)} for i i ∈ `newSet` to make
 				// Σ_{i ∈ `newSet`} y_{e(i)} ≤ z true.
@@ -838,7 +903,7 @@ function findDistributionMaximin(people, categories, nPeopleWanted) {
 }
 
 
-function findRandomSample(people, categories, nPeopleWanted) {
+async function findRandomSample(people, categories, nPeopleWanted) {
 
 	// Main algorithm to try to find a random sample.
 
@@ -857,7 +922,7 @@ function findRandomSample(people, categories, nPeopleWanted) {
 
 	if (selectedAlgorithm == 'maximin') {
 	
-		let d = findDistributionMaximin(
+		let d = await findDistributionMaximin(
 			people,
 			categories,
 			nPeopleWanted);
@@ -895,115 +960,131 @@ function findRandomSample(people, categories, nPeopleWanted) {
 	return result;
 }
 
-function runStratification() {
+async function runStratification() {
 
 	// Put the rest in a time-out so the page can render.
 	async function run() {
 
-		console.log(input);
+		// console.log(input);
 
 		// Refactor inputted data.
 		processCategories();
 
 		// First check if numbers specified in the population variables file
 		// make sense with the specified number to select.
+		let compatibleCategories = true;
 		for (const c of categories) {
 
 			if (nPeopleWanted < c.min || nPeopleWanted > c.max) {
 				error(`The number of people to select (${nPeopleWanted}) is out of the range of the numbers of people in one of the categories (${c.name}). It should be within [${c.min}, ${c.max}].`);
+
+				compatibleCategories = false;
 			}
 		}
 
-		// Perform sampling.
-
-		let sampleCreated = false,
-			nIters = 0,
-			maxIters = 10;
-
-		log(`Initial: (selected = 0, remaining = ${input.people.length})`);
-
-		let peopleSelected = [];
-
-		while (!sampleCreated && nIters < maxIters) {
-
-			await setTimeout(function() {}, 1000);
-
-			let tempPeople = deepCopy(input.people),
-				tempCategories = deepCopy(input.variables);
-
-			log(`Iteration: ${nIters}`);
-
-			let result = findRandomSample(
-				tempPeople,
-				tempCategories,
-				nPeopleWanted
-			)
-
-			if ( result.haltEarly ) {
-				log('Encountered error, halting early.')
-				break;
-			} else {
-				peopleSelected = result.peopleSelected;
-			}
-
-			if (categoryMinimumsReached(tempCategories)) {
-				log('SUCCESS!', ['good'])
-				sampleCreated = true;
-			}
-
-			nIters++;
-		}
-
-
-		if (sampleCreated) {
-			log(`We tried ${nIters} time(s).`);
-			log(`Selected ${peopleSelected.length} people.`);
-		} else {
-			log(`Failed after ${nIters} iterations. Gave up.`);
-		}
-
-
-		peopleSelected = peopleSelected.map(d => d.slice(6));
-		console.log(peopleSelected);
-		console.log(input.people);
-		outputSelected = deepCopy(input.people).filter(p => peopleSelected.includes(String(p.id)));
-		outputNotSelected = deepCopy(input.people).filter(p => !peopleSelected.includes(String(p.id)));
-
-		// Populate summary table.
 		let html = "",
-			vars = input.variables.map(d => d.category).filter(unique);
+			outputSelected = [],
+			outputNotSelected = [];
 
-		for (let v of vars) {
-			let vals = input.variables.filter(d => d.category == v),
-				nVals = vals.length;
-			for (let i = 0; i < nVals; i++) {
-				let requests = "";
-				if (vals[i].min == vals[i].max) {
-					requests = vals[i].min;
+		if (compatibleCategories) {
+			
+			// Perform sampling.
+
+			let sampleCreated = false,
+				nIters = 0,
+				maxIters = 10;
+
+			log(`Initial: (selected = 0, remaining = ${input.people.length})`);
+
+			let peopleSelected = [];
+
+			while (!sampleCreated && nIters < maxIters) {
+
+				await setTimeout(function() {}, 1000);
+
+				let tempPeople = deepCopy(input.people),
+					tempCategories = deepCopy(input.variables);
+
+				log(`Iteration: ${nIters}`);
+
+				let result = await findRandomSample(
+					tempPeople,
+					tempCategories,
+					nPeopleWanted
+				)
+
+				if ( result.haltEarly ) {
+					log('Encountered error, halting early.')
+					break;
 				} else {
-					let { min, max } = vals[i];
-					requests = `${min} &ndash; ${max}`;
+					peopleSelected = result.peopleSelected;
 				}
-				let selects = outputSelected.filter(d => d[v] == vals[i].name).length;
 
-				if (i == 0) {
-					html += `<tr class="new-value">
-						<td class="left" rowspan="${nVals}">
-							${v}
-						</td>
-						<td class="left">${vals[i].name}</td>
-						<td>${requests}</td>
-						<td>${selects}</td>
-					</tr>`;
-				} else {
-					html += `<tr>
-						<td class="left">${vals[i].name}</td>
-						<td>${requests}</td>
-						<td>${selects}</td>
-					</tr>`;
+				if (categoryMinimumsReached(tempCategories)) {
+					log('SUCCESS!', ['good'])
+					sampleCreated = true;
+				}
+
+				nIters++;
+			}
+
+
+			if (sampleCreated) {
+				log(`We tried ${nIters} time(s).`);
+				log(`Selected ${peopleSelected.length} people.`);
+			} else {
+				log(`Failed after ${nIters} iterations. Gave up.`);
+			}
+
+
+			peopleSelected = peopleSelected.map(d => d.slice(6));
+			// console.log(peopleSelected);
+			// console.log(input.people);
+			outputSelected = deepCopy(input.people).filter(p => peopleSelected.includes(String(p.id)));
+			outputNotSelected = deepCopy(input.people).filter(p => !peopleSelected.includes(String(p.id)));
+
+			// Populate summary table.
+			let vars = input.variables.map(d => d.category).filter(unique);
+
+			for (let v of vars) {
+				let vals = input.variables.filter(d => d.category == v),
+					nVals = vals.length;
+				for (let i = 0; i < nVals; i++) {
+					let requests = "";
+					if (vals[i].min == vals[i].max) {
+						requests = vals[i].min;
+					} else {
+						let { min, max } = vals[i];
+						requests = `${min} &ndash; ${max}`;
+					}
+					let selects = outputSelected.filter(d => d[v] == vals[i].name).length;
+
+					if (i == 0) {
+						html += `<tr class="new-value">
+							<td class="left" rowspan="${nVals}">
+								${v}
+							</td>
+							<td class="left">${vals[i].name}</td>
+							<td>${requests}</td>
+							<td>${selects}</td>
+						</tr>`;
+					} else {
+						html += `<tr>
+							<td class="left">${vals[i].name}</td>
+							<td>${requests}</td>
+							<td>${selects}</td>
+						</tr>`;
+					}
 				}
 			}
 		}
+
+
+		// postMessage({
+		// 	type: 'progress',
+		// 	message: '',
+		// 	classes: ['horizontal-rule']
+		// })
 
 		postMessage({
 			type: 'summary-table',
@@ -1037,5 +1118,5 @@ onmessage = function(e) {
 
 	runStratification();
 
-	console.log('ALL DONE')
+	// console.log('ALL DONE')
 }

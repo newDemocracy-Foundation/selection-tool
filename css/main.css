@@ -432,6 +432,24 @@ div.log p.good {
 	font-size: 1.2rem;
 }
 
+div.log p.error {
+	color: #d74500;
+	font-weight: 700;
+	/*font-size: 1rem;*/
+}
+
+div.log p.horizontal-rule {
+	height: 1rem;
+	background-color: #00455322;
+	margin: 1rem -1rem;
+}
+
+div.log p.indent {
+	box-sizing: border-box;
+	padding-left: 2rem;
+	opacity: .8;
+}
+
 div.export-table {
 	display: grid;
 	grid-template-columns: 1fr auto auto;

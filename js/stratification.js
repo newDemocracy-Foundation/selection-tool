@@ -42,6 +42,14 @@ function deepCopy(arr) {
 // ############################################################################### //
 // LOAD DATA
 
+function removeEmptyRows(data) {
+	
+	console.log(data);
+	// Seems to do this automatically?
+
+	return data;
+}
+
 function dropHandler(ev, idSuffix) {
 	// Prevent default behavior (Prevent file from being opened)
 	ev.preventDefault();
@@ -61,6 +69,7 @@ function dropHandler(ev, idSuffix) {
 
 					var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 					input[idSuffix] = XLSX.utils.sheet_to_json(firstSheet);
+					input[idSuffix] = removeEmptyRows(input[idSuffix]);
 
 					// Update styling.
 					var id = 'dragdrop-' + idSuffix;
@@ -119,7 +128,7 @@ function handleFileSelect(ev) {
 		var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 		input[idSuffix] = XLSX.utils.sheet_to_json(firstSheet);
 
-		console.log(e.target)
+		input[idSuffix] = removeEmptyRows(input[idSuffix]);
 
 		// Update styling.
 		var id = 'dragdrop-' + idSuffix;
@@ -230,6 +239,9 @@ function runStratification() {
 	document.getElementById('run').classList.add('in-progress');
 	document.getElementById('run').innerHTML = 'Selection in progress...';
 
+	// Clear progress log.
+	document.getElementById('log').innerHTML = '';
+
 
 	let nPeopleWanted = document.getElementById('n-to-select').value;
 
@@ -248,7 +260,7 @@ function runStratification() {
 
 	stratifier.onmessage = function(e) {
 		
-		if (e.data.type == 'progress') {
+		if (['progress', 'error'].includes(e.data.type)) {
 			
 			let logArea = document.getElementById('log');
 			let { message, classes } = e.data;
