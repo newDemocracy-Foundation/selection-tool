@@ -600,6 +600,63 @@ function _findCommitteeProbabilities(
 	return probabilities;
 }
 
+async function findDistributionSimple(people, categories, nPeopleWanted) {
+
+	// Generate a set of feasible committees in which all agents whom it is
+	// possible to represent are represented, using the same algorithm as in
+	// the maximin method. Then simply assign a uniform distribution over such
+	// committees.
+	
+	// Returns:
+	// 		An object containing an array of feasible committees, where each
+	// 		committee is represented by a sub array of inputs.people, and an
+	// 		array of probabilities of equal length, describing the probability
+	// 		with which each committee should be selected.
+
+	log('Using simple algorithm.');
+
+	let households;
+		
+	if (checkSameAddress || fairToHouseholds) {
+		households = _computeHouseholds(people);
+	}
+
+	// Set up an ILP `newCommitteeModel` that can be used for discovering new
+	// feasible committees maximising some sum of weights over the people.
+	let { newCommitteeModel,
+		  agentVars,
+		  feasible } = _setupCommitteeGeneration(
+							people,
+							categories,
+							nPeopleWanted,
+							checkSameAddress,
+							households
+						);
+
+	if (!feasible) {
+		return {
+			committees: [],
+			probabilities: []
+		};
+	}
+
+	// Start by finding some initial committees, guaranteed to cover every person
+	// that can be covered by some committee.
+	let { committees,
+		  coveredAgents } = await _generateInitialCommittees(
+		  						newCommitteeModel,
+		  						agentVars,
+		  						Math.floor(people.length / 2)
+		  					);
+
+	let probabilities = Array(committees.length).fill(1/committees.length);
+
+	return {
+		committees: committees,
+		probabilities: probabilities
+	}
+}
+
 async function findDistributionMaximin(people, categories, nPeopleWanted) {
 
 	// Find a distribution over feasible committees that maximises the minimum
@@ -920,7 +977,16 @@ async function findRandomSample(people, categories, nPeopleWanted) {
 	let committees,
 		probabilities;
 
-	if (selectedAlgorithm == 'maximin') {
+	if (selectedAlgorithm == 'simple') {
+	
+		let d = await findDistributionSimple(
+			people,
+			categories,
+			nPeopleWanted);
+		committees = d.committees;
+		probabilities = d.probabilities;
+	
+	} else if (selectedAlgorithm == 'maximin') {
 	
 		let d = await findDistributionMaximin(
 			people,

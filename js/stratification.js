@@ -215,6 +215,11 @@ document.getElementById('remove-variables')
 
 let algorithms = [
 	{
+		id: 'simple',
+		name: 'Simple',
+		disabled: false
+	},
+	{
 		id: 'maximin',
 		name: 'Maximin',
 		disabled: false
