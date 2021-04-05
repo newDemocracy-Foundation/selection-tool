@@ -263,25 +263,24 @@ h2 {
 	color: #999;
 	margin-bottom: 1.5rem;
 
-	transition: border-color .25s;
+	transition: border-color .2s;
+	transition: background-color .2s;
 }
 
 .filedrop.active {
 	border-color: #004553;
+	background-color: #557b8311;
 }
 
 .filedrop:hover {
 	border-color: #004553;
+	background-color: #557b8311; 
 }
 
 .filedrop.selected {
 	color: #000;
-	border-color: #000;
-	background: rgb(240,245,246);
-	background: -moz-linear-gradient(152deg, rgba(240,245,246,1) 0%, rgba(212,222,223,1) 79%, rgba(204,220,222,1) 95%, rgba(204,220,222,1) 95%, rgba(185,215,221,1) 100%);
-	background: -webkit-linear-gradient(152deg, rgba(240,245,246,1) 0%, rgba(212,222,223,1) 79%, rgba(204,220,222,1) 95%, rgba(204,220,222,1) 95%, rgba(185,215,221,1) 100%);
-	background: linear-gradient(152deg, rgba(240,245,246,1) 0%, rgba(212,222,223,1) 79%, rgba(204,220,222,1) 95%, rgba(204,220,222,1) 95%, rgba(185,215,221,1) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f0f5f6",endColorstr="#b9d7dd",GradientType=1);
+	border-color: #004553;
+	background-color: #557b8333;
 }
 
 .msg-file {
@@ -336,6 +335,10 @@ div.two-column {
 	grid-template-columns: repeat(2, calc(50% - .75rem));
 	grid-template-rows: auto;
 	grid-column-gap: 1.5rem;
+}
+
+div.two-column p {
+	margin: 0;
 }
 
 h3 {
