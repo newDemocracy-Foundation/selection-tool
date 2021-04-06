@@ -511,3 +511,48 @@ table.summary th {
 table.summary .left {
 	text-align: left;
 }
+
+.algorithms {
+	display: grid;
+	grid-template-columns: .5fr .5fr;
+	grid-column-gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.algorithm {
+	border: 1px solid #557b8322;
+	padding: 1rem;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.algorithm.selected, .algorithm:hover {
+	background-color: #557b8311;
+	border-color: #004553;
+}
+
+span.alg-name {
+	font-weight: 700;
+	color: #004553;
+}
+
+span.alg-pro, span.alg-con {
+	text-transform: uppercase;
+	font-size: .8rem;
+	letter-spacing: 1px;
+}
+
+span.alg-pro {
+	color: #1b5e20;
+}
+
+span.alg-con {
+	color: #7f0000;
+}
+
+.algorithm ul {
+	padding-left: 20px;
+}
+.algorithm ul li {
+	margin-bottom: 10px;
+}

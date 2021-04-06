@@ -1031,8 +1031,6 @@ async function runStratification() {
 	// Put the rest in a time-out so the page can render.
 	async function run() {
 
-		// console.log(input);
-
 		// Refactor inputted data.
 		processCategories();
 
@@ -1182,7 +1180,20 @@ onmessage = function(e) {
 		EPS
 	] = e.data;
 
-	runStratification();
+	if (selectedAlgorithm === undefined) {
+		error('No algorithm selected. Go back to Step 3 and choose a selection algorithm.')
+		postMessage({
+			type: 'summary-table',
+			html: ''
+		})
+		postMessage({
+			type: 'output',
+			selected: [],
+			notSelected: []
+		})
+	} else {
+		runStratification();
+	}
 
 	// console.log('ALL DONE')
 }

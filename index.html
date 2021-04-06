@@ -157,10 +157,38 @@
 
 		<div class="pane hide" data-pane="settings">
 
-			Selection algorithm: <select name="algorithm" id="algorithm-select">
-			</select>
+			<h3>Choose which <strong>selection algorithm</strong> to use...</h3>
 
-			<br /><br />
+			<div class="algorithms">
+				<div id="alg-simple" class="algorithm" onclick="selectAlg('simple')">
+					<span class="alg-name">Simple</span>
+					<p>In this algorithm, first a number of panels are generated which satisfy the specified constraints, and then one of those panels is selected at random.</p>
+					<span class="alg-pro">Pros</span>
+					<ul>
+						<li>Should work every time.</li>
+						<li>Relatively fast.</li>
+					</ul>
+					<span class="alg-con">Cons</span>
+					<ul>
+						<li>Not always fair to individuals because some individuals will be represented in more of the panels than others.</li>
+					</ul>
+				</div>
+				<div id="alg-maximin" class="algorithm" onclick="selectAlg('maximin')">
+					<span class="alg-name">Maximin</span>
+					<p>In this algorithm, first a number of panels are generated which satisfy the specified constraints, then probabilities are assigned to each of the panels such that the minimum probability than any particular candidate is selected is maximised, and then a panel is selected according to that probability distribution.</p>
+					<span class="alg-pro">Pros</span>
+					<ul>
+						<li>Much fairer to individuals than the Simple algorithm.</li>
+					</ul>
+					<span class="alg-con">Cons</span>
+					<ul>
+						<li>A bit slower.</li>
+						<li>Might not work. The algorithm can get stuck part way through on larger problems.</li>
+					</ul>
+				</div>
+			</div>
+
+			<h3>...and specify <strong>other important settings</strong>.</h3>
 
 			Check same address? <input type="checkbox" name="check-same-address" id="checkSameAddress" checked />
 
@@ -171,14 +199,6 @@
 			<br /><br />
 
 			Number of people to select: <input type="number" name="n-to-select" id="n-to-select" value="11"/>
-
-			<br /><br />
-
-			<ul>
-				<li>Explain different selection algorithms (broadly how they work, strengths / weaknesses, links to literature).</li>
-				<li>Explain other settings do.</li>
-				<li>Add new settings to make more flexible (eg. specify sameAddressCols, etc.)</li>
-			</ul>
 
 			<nav class="bottom">
 				<div class="tab" data-pane="import"></div>
@@ -310,6 +330,17 @@
 		let tabs = document.querySelectorAll('nav div.tab');
 		for (let i = 0; i < tabs.length; i ++) {
 			tabs[i].addEventListener('click', clickTab, false);
+		}
+
+		var selectedAlgorithm;
+
+		function selectAlg(alg) {
+			let algs = document.querySelectorAll(".algorithm");
+			for (let a of algs) {
+				a.classList.remove('selected');
+			}
+			document.querySelector(`#alg-${alg}`).classList.add('selected');
+			selectedAlgorithm = alg;
 		}
 
 		// changeTab('run');

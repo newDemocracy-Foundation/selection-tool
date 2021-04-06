@@ -213,30 +213,6 @@ document.getElementById('remove-variables')
 
 // Populate settings.
 
-let algorithms = [
-	{
-		id: 'simple',
-		name: 'Simple',
-		disabled: false
-	},
-	{
-		id: 'maximin',
-		name: 'Maximin',
-		disabled: false
-	},
-	{
-		id: 'nash',
-		name: 'Nash',
-		disabled: true
-	},
-];
-
-let algorithmSelect = document.getElementById('algorithm-select');
-
-algorithms.forEach(function(d) {
-	algorithmSelect.innerHTML = algorithmSelect.innerHTML + `<option value="${d.id}" ${d.disabled ? 'disabled' : ''}>${d.name}</option>`;
-})
-
 function runStratification() {
 	
 	// Add 'in-progress' class to run button.
@@ -256,7 +232,7 @@ function runStratification() {
 		input,
 		categories,
 		nPeopleWanted,
-		algorithmSelect.value,
+		selectedAlgorithm,
 		document.getElementById('checkSameAddress').checked,
 		document.getElementById('fairToHouseholds').checked,
 		checkSameAddressColumns,
