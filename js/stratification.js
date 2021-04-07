@@ -16,8 +16,8 @@ let input = {},
 	outputNotSelected = [],
 	categories = [],
 	checkSameAddressColumns = [
-		'primary_address1',
-		'primary_zip'
+		'address',
+		'postcode'
 	],
 	mode = 'prod';
 

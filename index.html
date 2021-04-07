@@ -157,7 +157,7 @@
 
 		<div class="pane hide" data-pane="settings">
 
-			<h3>Choose which <strong>selection algorithm</strong> to use...</h3>
+			<h3>Selection Algorithm:</h3>
 
 			<div class="algorithms">
 				<div id="alg-simple" class="algorithm" onclick="selectAlg('simple')">
@@ -188,17 +188,31 @@
 				</div>
 			</div>
 
-			<h3>...and specify <strong>other important settings</strong>.</h3>
+			<h3>Other Settings:</h3>
 
-			Check same address? <input type="checkbox" name="check-same-address" id="checkSameAddress" checked />
+			<div class="option alg-simple alg-maximin">
+				<span class="opt-name">How many people should be selected?</span>
+				<input type="number" name="n-to-select" id="n-to-select" placeholder="Enter a number..." />
+				<span class="opt-explanation">The number of people to select. This should be compatible with the numbers you specified in the Population Profile you uploaded in Step 2. <span id="bounds"></span></span>
 
-			<br /><br />
+			</div>
 
-			Fair to households? <input type="checkbox" name="fair-to-housholds" id="fairToHouseholds" />
+			<div class="option alg-simple alg-maximin">
+				<span class="opt-name">Only 1 per household</span>
+				<div class="input">
+					<input type="checkbox" name="check-same-address" id="checkSameAddress" class="switch" checked />
+				</div>
+				<span class="opt-explanation">When toggled on, the selected panel will include at most 1 person from each household. Households are determined by each candidate's address, as specified by two columns in the Candidate Information spreadsheet you uploaded in Step 2: 'address' and 'postcode'.</span>
+			</div>
 
-			<br /><br />
+			<div class="option alg-maximin hide">
+				<span class="opt-name">Fair to households?</span>
+				<div class="input">
+					<input type="checkbox" name="fair-to-housholds" id="fairToHouseholds" class="switch" />
+				</div>
+				<span class="opt-explanation">When toggled on, the algorithm will aim to maximise the minimum expected number of candidates selected from each household, rather than the minimum probability that any individual is selected.</span>
+			</div>
 
-			Number of people to select: <input type="number" name="n-to-select" id="n-to-select" value="11"/>
 
 			<nav class="bottom">
 				<div class="tab" data-pane="import"></div>
@@ -335,12 +349,24 @@
 		var selectedAlgorithm;
 
 		function selectAlg(alg) {
+			
+			// Select the algorithm that was clicked.
 			let algs = document.querySelectorAll(".algorithm");
 			for (let a of algs) {
 				a.classList.remove('selected');
 			}
 			document.querySelector(`#alg-${alg}`).classList.add('selected');
 			selectedAlgorithm = alg;
+
+			// Update which other settings are visible.
+			let opts = document.querySelectorAll(".option");
+			for (let opt of opts) {
+				if (opt.classList.contains(`alg-${alg}`)) {
+					opt.classList.remove('hide');
+				} else {
+					opt.classList.add('hide');
+				}
+			}
 		}
 
 		// changeTab('run');
