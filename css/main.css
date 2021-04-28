@@ -531,6 +531,11 @@ table.summary .left {
 	border-color: #ed692b;
 }
 
+.algorithm.selected .alg-name::after {
+	content: 'SELECTED';
+	color: #ed692b;
+}
+
 .algorithm:hover {
 	background-color: #557b8311;
 	border-color: #004553;
@@ -547,6 +552,8 @@ span.alg-name {
 	margin: -1rem -1rem 1rem -1rem;
 	padding: 1rem;
 	background-color: #557b8322;
+	display: flex;
+	justify-content: space-between;
 }
 
 span.alg-pro, span.alg-con {
@@ -606,6 +613,8 @@ input[type="number"] {
 	outline: none;
 	font-family: monospace;
 	font-size: 1.4rem;
+	/*display: block;*/
+	width: 100%;
 }
 
 /* CUSTOM CHECKBOXES */

@@ -177,6 +177,40 @@ function solveInWebWorker(model, timeout = 5000) {
 
 }
 
+function solveInGlpkWorker(model, timeout = 1000000) {
+
+	let p = new Promise(resolve => {
+
+		let worker = new Worker('/js/glpk.js'),
+			results = {};
+
+
+		worker.postMessage({ lp: model, msg_lev: 3 });
+		
+
+		glpk.onmessage = function (evt) {
+			resolve(evt);
+		};
+
+		// worker.onmessage = function(e) {
+		// 	if (e.data.type == 'output') {
+		// 		results = e.data.output;
+		// 		worker.terminate();
+		// 		resolve(results);
+		// 	}
+		// }
+
+		setTimeout(function() {
+			worker.terminate();
+			resolve('TIMED OUT');
+		}, timeout);
+
+	})
+
+	return p;
+
+}
+
 function processCategories() {
 	
 	categories = input.variables.map(d => d.category)
@@ -772,6 +806,102 @@ async function findDistributionMaximin(people, categories, nPeopleWanted) {
 		// TODO - check this.
 	})
 
+	// /* GLPK 4.53 constants */
+	// let GLP_MIN = 1  /* minimization */
+	// 	, GLP_MAX = 2  /* maximization */
+
+	// 	/* kind of structural variable: */
+	// 	, GLP_CV  = 1  /* continuous variable */
+	// 	, GLP_IV  = 2  /* integer variable */
+	// 	, GLP_BV  = 3  /* binary variable */
+
+	// 	/* type of auxiliary/structural variable: */
+	// 	, GLP_FR  = 1  /* free (unbounded) variable */
+	// 	, GLP_LO  = 2  /* variable with lower bound */
+	// 	, GLP_UP  = 3  /* variable with upper bound */
+	// 	, GLP_DB  = 4  /* double-bounded variable */
+	// 	, GLP_FX  = 5  /* fixed variable */
+
+	// 	, GLP_MSG_OFF = 0  /* no output */
+	// 	, GLP_MSG_ERR = 1  /* warning and error messages only */
+	// 	, GLP_MSG_ON  = 2  /* normal output */
+	// 	, GLP_MSG_ALL = 3  /* full output */
+	// 	, GLP_MSG_DBG = 4  /* debug output */
+
+	// 	/* solution status: */
+	// 	, GLP_UNDEF  = 1  /* solution is undefined */
+	// 	, GLP_FEAS   = 2  /* solution is feasible */
+	// 	, GLP_INFEAS = 3  /* solution is infeasible */
+	// 	, GLP_NOFEAS = 4  /* no feasible solution exists */
+	// 	, GLP_OPT    = 5  /* solution is optimal */
+	// 	, GLP_UNBND  = 6  /* solution is unbounded */
+	// ;
+
+	// let altModel = {
+	// 	name: 'LP',
+	// 	objective: {
+	// 		direction: GLP_MIN,
+	// 		name: 'obj',
+	// 		vars: [
+	// 			{ name: 'z', coef: 1.0 }
+	// 		]
+	// 	},
+	// 	subjectTo: []
+	// };
+
+	// // Σ_e y_e = 1
+	// let sumToOne = {
+	// 	name: 'sumToOne',
+	// 	vars: [],
+	// 	bnds: { type: GLP_FX, ub: 1.0, lb: 1.0}
+	// };
+	// entitlements.forEach(e => {
+	// 	sumToOne.vars.push({
+	// 		name: `entitlement_${e}`,
+	// 		coef: 1.0
+	// 	})
+	// })
+	// altModel.subjectTo.push(sumToOne)
+
+	// // y_e ≥ 0 ∀ e
+	// entitlements.forEach(e => {
+	// 	altModel.subjectTo.push({
+	// 		name: `min_entitlement_${e}`,
+	// 		vars: [{
+	// 			name: `entitlement_${e}`,
+	// 			coef: 1.0
+	// 		}],
+	// 		bnds: { type: GLP_LO, ub: 1.0, lb: 0.0 }
+	// 	})
+	// })
+
+	// // Shortcuts for y_{e(i)} (incr_agent_vars)
+	// let incrAgentVars = {};
+	// coveredAgents.forEach(v => {
+	// 	incrAgentVars[v] = `entitlement_${contributesToEntitlement[v]}`;
+	// })
+
+	// // Σ_{i ∈ B} y_{e(i)} ≤ z   ∀ B ∈ `committees`
+	// committees.forEach((c,i) => {
+	// 	let constraint = {
+	// 		name: `committee_${i}`,
+	// 		vars: [{
+	// 			name: `z`,
+	// 			coef: `1.0`
+	// 		}],
+	// 		bnds: { type: GLP_LO, lb: 0.0 }
+	// 	};
+	// 	c.forEach(v => {
+	// 		constraint.vars.push({
+	// 			name: incrAgentVars[v],
+	// 			coef: -1.0
+	// 		})
+	// 	})
+	// 	altModel.subjectTo.push(constraint)
+	// })
+
+	// let results = await solveInWebWorker(altModel);
+
 	console.log('ENTERING WHILE LOOP');
 	// model.options = {
 	// 	timeout: 10000
@@ -792,6 +922,8 @@ async function findDistributionMaximin(people, categories, nPeopleWanted) {
 		console.log('#0');
 
 		let result = solver.Solve(model);
+		// let result = glpk.solve(altModel, glpk.GLP_MSG_ALL);
+		// let result = glpk.postMessage({ lp: altModel, msg_lev: 3 })
 		if (!result.feasible) {
 			error('No maximin distribution found.')
 		}
@@ -1026,7 +1158,7 @@ async function findRandomSample(people, categories, nPeopleWanted) {
 	return result;
 }
 
-async function runStratification() {
+async function runStratification(glpk) {
 
 	// Put the rest in a time-out so the page can render.
 	async function run() {
