@@ -1,14 +1,22 @@
 importScripts(
-	'https://unpkg.com/javascript-lp-solver/prod/solver.js'
+	'/js/importGLPK.js',
 	)
 
-onmessage = function(e) {
+onmessage = async function(e) {
   
 	[
 		model
 	] = e.data;
 
-	let results = solver.Solve(model);
+	// Initialise GLPK solver.
+	const glpk = await GLPK();
+
+	let results;
+	let r = await glpk.solve(model, {})
+		.then(res => {
+			results = res.result;
+		})
+		.catch(err => console.log(err));
 
 	postMessage({
 		type: 'output',
